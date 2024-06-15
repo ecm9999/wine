@@ -1,11 +1,14 @@
 name: CML
+
 on: [push]
+
 jobs:
   train-and-report:
     runs-on: ubuntu-latest
     container: docker://dvcorg/cml-py3:latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Train model
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -13,13 +16,24 @@ jobs:
           pip install -r requirements.txt
           python train.py  # generate plot.png
 
+          # List files in the directory
+          echo "Listing files in the directory:"
+          ls -la
+
           # Create CML report
-          echo "##MODEL METRICS" > report.md
+          echo "## MODEL METRICS" > report.md
           cat metrics.txt >> report.md
 
-          echo "##Data viz" >> report.md
-          cml-publish feature_importance.png --md >> repoprt.md
+          echo "## Data Visualization" >> report.md
+          echo "Publishing feature_importance.png:"
+          cml-publish feature_importance.png --md >> report.md
+          echo "Publishing residuals.png:"
           cml-publish residuals.png --md >> report.md
 
+          # Display the report content
+          echo "Report content:"
+          cat report.md
+
+          # Send the CML report as a comment
           cml-send-comment report.md
 
