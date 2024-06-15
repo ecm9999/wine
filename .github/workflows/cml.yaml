@@ -1,5 +1,4 @@
-
-name: CML
+name: model-wine-quality
 on: [push]
 jobs:
   train-and-report:
