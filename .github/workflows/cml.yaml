@@ -1,12 +1,12 @@
-
 name: CML
 on: [push]
 jobs:
   train-and-report:
     runs-on: ubuntu-latest
-    container: docker://ghcr.io/iterative/cml:0-dvc2-base1
+    container: docker://dvcorg/cml-py3:latest
     steps:
       - uses: actions/checkout@v3
+      - uses: iterative/setup-tools@v1
       - name: Train model
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -15,6 +15,5 @@ jobs:
           python train.py  # generate plot.png
 
           # Create CML report
-          cat metrics.txt >> report.md
-          echo '![](./plot.png "Confusion Matrix")' >> report.md
-          cml comment create report.md
+          echo "MODEL METRICS"
+          cat metrics.txt
